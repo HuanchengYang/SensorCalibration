@@ -197,6 +197,22 @@ void MotionInst::calibrate()
 	
 	int16_t iTemp;
 	double fTemp;
+	
+	int16_t temperature1;
+	int16_t temperature2;
+	uint16_t stable_temperature=0;
+	
+	while (!stable_temperature){
+	temperature1=mpu.getTemperature();
+	std::this_thread::sleep_for( std::chrono::milliseconds(100));
+	temperature2=mpu.getTemperature();
+	
+	if (temperature2==temperature1){
+		stable_temperature=1;
+	}
+	}
+	
+	
 
 	// Set parameters based on configuration
 	mpu.setFullScaleAccelRange( accelFSSelection );
@@ -209,6 +225,10 @@ void MotionInst::calibrate()
 	cout << "Pressing X stops calibration.\n";
 	
 	uint16_t cycleCount = 0;
+	
+	cout << "Checking if temperature is stable";
+	temperature=mpu.getTemperature();
+	
 	
 	cycleCalibrate = true;
 	
