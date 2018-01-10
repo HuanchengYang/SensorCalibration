@@ -730,3 +730,26 @@ void MotionInst::parseINI()
 	calibYGOffset = (int16_t)reader.GetInteger( "CALIBRATION", "YGOFFSET", 0 );
 	calibZGOffset = (int16_t)reader.GetInteger( "CALIBRATION", "ZGOFFSET", 0 );
 }
+
+bool MotionInst::checkTemperature(){
+	int16_t temperature1;
+	int16_t temperature2;
+	bool stable_temperature=false;
+	
+	while (!stable_temperature){
+	temperature1=mpu.getTemperature();
+	std::this_thread::sleep_for( std::chrono::milliseconds(100));
+	temperature2=mpu.getTemperature();
+	
+	if (temperature2==temperature1){
+		stable_temperature=true;
+	}
+	else{
+		cout<<"Current Temperature 1 is"<<temperature1<<" and current temperature 2 is"<< temperature2<<"\n";
+		cout<<"Check temperature again in 1s";
+		std::this_thread::sleep_for( std::chrono::milliseconds(1000));
+	}
+	}
+	return stable_temperature;
+	
+}
