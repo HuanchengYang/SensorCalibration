@@ -227,6 +227,7 @@ void menu1()
 	cout << "\n";
 	cout << "[6] - Configure digital low-pass filter (DLPF) - " << inst->current_DLPF_setting() << endl;	
 	cout << "[7] - Save Config\n";
+	cout << "[8] - Check Temperature\n";
 	
 
 	cout << "\n[C] - Copy File to WAP - " << file_name_string << "\n";
@@ -320,6 +321,9 @@ int main()
 
 					case '7' : // Save INI File
 						inst->writeINI();
+						break;
+					case '8' :// check temperature
+						inst->checkTemperature();
 						break;
 					
 						
