@@ -198,6 +198,8 @@ void MotionInst::calibrate()
 	int16_t iTemp;
 	double fTemp;
 	
+	double calibration_temperature;
+	
 	
 	
 	
@@ -216,6 +218,12 @@ void MotionInst::calibrate()
 	
 	cout << "Checking if temperature is stable";
 	
+	bool temperature_is_stable=0;
+	while (!temperature_is_stable){
+	temperature_is_stable=checkTemperature(&calibration_temperature);
+	}
+	cout << "Temperature is stable now";
+	cout << "Temperature is "<<calibration_temperature<<" C";
 	
 	cycleCalibrate = true;
 	
@@ -718,7 +726,7 @@ void MotionInst::parseINI()
 	calibZGOffset = (int16_t)reader.GetInteger( "CALIBRATION", "ZGOFFSET", 0 );
 }
 
-bool MotionInst::checkTemperature(){
+bool MotionInst::checkTemperature(double *temperature=NULL){
 	int16_t temperature1;
 	int16_t temperature2;
 	bool stable_temperature=false;
@@ -731,11 +739,16 @@ bool MotionInst::checkTemperature(){
 	
 	if (temperature2==temperature1){
 		stable_temperature=true;
-		temperature=temperature2/340+36.53;
-		cout<<"Temperature is stable now. The current temperature is "<<temperature<<" C \n";
+		if (*temperature!=NULL){
+			*temperature=temperature2/340+36.53;
+			cout<<"Temperature is stable now. The current temperature is "<<*temperature<<" C \n";
+			}
+		else{
+			cout<<"Temperature is stable now. The current temperature is "<<*temperature2<<" C \n";
+			}
 	}
 	else{
-		cout<<"Current Temperature 1 is"<<temperature1<<" and current temperature 2 is "<< temperature2<<"\n";
+		cout<<"Current Temperature 1 is"<<temperature1<<" and current Temperature 2 is "<< temperature2<<"\n";
 		cout<<"Check temperature again in 1s \n";
 		std::this_thread::sleep_for( std::chrono::milliseconds(1000));
 	}
