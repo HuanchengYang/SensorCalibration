@@ -15,7 +15,7 @@
 
 #define CALIBRATION_ACCUM_COUNT 250
 #define CALIB_READ_DELAY_MS 5
-#define CALIBRATION_INI "inst.ini"
+#define CALIBRATION_INI "/home/pi/P273/new_calibration/SensorCalibration/inst.ini"
 
 using namespace std;
 
@@ -726,11 +726,10 @@ void MotionInst::parseINI()
 	calibZGOffset = (int16_t)reader.GetInteger( "CALIBRATION", "ZGOFFSET", 0 );
 }
 
-bool MotionInst::checkTemperature(double *temperature=NULL){
+bool MotionInst::checkTemperature(double *temperature){
 	int16_t temperature1;
 	int16_t temperature2;
 	bool stable_temperature=false;
-	double temperature;
 	
 	while (!stable_temperature){
 	temperature1=mpu.getTemperature();
@@ -739,12 +738,12 @@ bool MotionInst::checkTemperature(double *temperature=NULL){
 	
 	if (temperature2==temperature1){
 		stable_temperature=true;
-		if (*temperature!=NULL){
+		if (temperature!=nullptr){
 			*temperature=temperature2/340+36.53;
 			cout<<"Temperature is stable now. The current temperature is "<<*temperature<<" C \n";
 			}
 		else{
-			cout<<"Temperature is stable now. The current temperature is "<<*temperature2<<" C \n";
+			cout<<"Temperature is stable now. The current temperature is "<<temperature2<<" C \n";
 			}
 	}
 	else{
