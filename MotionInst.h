@@ -40,10 +40,13 @@ public:
 					int16_t *avgXG, int16_t *avgYG, int16_t *avgZG,
 					bool loadCurrent = FALSE );
 	
+	bool checkTemperature(double *temperature= nullptr);
+	
 	double getAccelInG( int16_t accel );
 	double getGyroInDegPerS( int16_t gyro );
 	
 	void getMotionStamped( double *captTime, double *xa, double *ya, double *za, double *xg, double *yg, double *zg );
+	void ComplementaryFilter(double *xa, double *ya, double *za, double *xg, double *yg, double *zg, double *pitch,double *roll);
 	
 	void displayAccelFSSelection();
 	void selectAccelFSSelection();

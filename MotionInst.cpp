@@ -12,10 +12,11 @@
 #include <fstream>
 #include <cstring>
 #include "INIReader.h"
+#include <math.h>
 
 #define CALIBRATION_ACCUM_COUNT 250
 #define CALIB_READ_DELAY_MS 5
-#define CALIBRATION_INI "inst.ini"
+#define CALIBRATION_INI "/home/pi/P273/new_calibration/SensorCalibration/inst.ini"
 
 using namespace std;
 
@@ -197,6 +198,12 @@ void MotionInst::calibrate()
 	
 	int16_t iTemp;
 	double fTemp;
+	
+	double calibration_temperature;
+	
+	
+	
+	
 
 	// Set parameters based on configuration
 	mpu.setFullScaleAccelRange( accelFSSelection );
@@ -209,6 +216,15 @@ void MotionInst::calibrate()
 	cout << "Pressing X stops calibration.\n";
 	
 	uint16_t cycleCount = 0;
+	
+	cout << "Checking if temperature is stable";
+	
+	bool temperature_is_stable=0;
+	while (!temperature_is_stable){
+	temperature_is_stable=checkTemperature(&calibration_temperature);
+	}
+	cout << "Temperature is stable now";
+	cout << "Temperature is "<<calibration_temperature<<" C";
 	
 	cycleCalibrate = true;
 	
@@ -710,3 +726,60 @@ void MotionInst::parseINI()
 	calibYGOffset = (int16_t)reader.GetInteger( "CALIBRATION", "YGOFFSET", 0 );
 	calibZGOffset = (int16_t)reader.GetInteger( "CALIBRATION", "ZGOFFSET", 0 );
 }
+
+bool MotionInst::checkTemperature(double *temperature){
+	int16_t temperature1;
+	int16_t temperature2;
+	bool stable_temperature=false;
+	
+	while (!stable_temperature){
+	temperature1=mpu.getTemperature();
+	std::this_thread::sleep_for( std::chrono::milliseconds(100));
+	temperature2=mpu.getTemperature();
+	
+	if (temperature2==temperature1){
+		stable_temperature=true;
+		if (temperature!=nullptr){
+			*temperature=temperature2/340+36.53;
+			cout<<"Temperature is stable now. The current temperature is "<<*temperature<<" C \n";
+			}
+		else{
+			cout<<"Temperature is stable now. The current temperature is "<<temperature2<<" C \n";
+			}
+	}
+	else{
+		cout<<"Current Temperature 1 is"<<temperature1<<" and current Temperature 2 is "<< temperature2<<"\n";
+		cout<<"Check temperature again in 1s \n";
+		std::this_thread::sleep_for( std::chrono::milliseconds(1000));
+	}
+	}
+	return stable_temperature;
+	
+}
+
+void MotionInst::ComplementaryFilter(double *xa, double *ya, double *za, double *xg, double *yg, double *zg, double *pitch,double *roll){
+
+	double pitchAcc, rollAcc;
+	double delta_t=1.0/samplesPerSecond;
+	
+	*pitch += *xg * delta_t; // Angle around x axis
+	*roll -= *yg * delta_t; // Angle around y axis
+	
+	int forceMagnitudeApprox = abs((int) *xa*16384)+abs((int) *ya*16384)+abs((int) *za*16384);
+	//cout<<"forceMagnitude is "<<forceMagnitudeApprox << "\n";
+	
+	if (forceMagnitudeApprox >8192 && forceMagnitudeApprox<32768){
+		// Turning around the X axis result in a vector on Y axis
+		pitchAcc=atan2(*ya,*za)*180/M_PI;
+		*pitch=*pitch *0.98+pitchAcc*0.02;
+
+		// Turning around the Y axis result in a vector on X axis
+		rollAcc=atan2(*xa,*za)*180/M_PI;
+		*roll=*roll *0.98+rollAcc*0.02;
+	}
+}
+	
+
+	//
+
+
