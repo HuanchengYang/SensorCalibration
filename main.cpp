@@ -129,9 +129,9 @@ void captureTask(short capturesPerSec)
 	captureStream << "\"Sample Rate\", " << (float)((float)1/(float)inst->samplesPerSecond) << "s," << inst->samplesPerSecond << "Hz" <<"\n\n\n";
 	
 
-	double timeDelta=0, xa, ya, za, xg, yg, zg;
+	double timeDelta=0, xa, ya, za, xg, yg, zg, pitch=0, roll=0;
 	
-	captureStream << "\"Time Delta\", X Accel, Y Accel, Z Accel, X Gyro, Y Gyro, Z Gyro\n";
+	captureStream << "\"Time Delta\", X Accel, Y Accel, Z Accel, X Gyro, Y Gyro, Z Gyro , pitch , roll\n";
 	std::this_thread::yield();
 	inst->resetFIFO();
 	while ( runCaptureThread )
@@ -149,9 +149,15 @@ void captureTask(short capturesPerSec)
 //				cout << "Before next motion stamp: " << fifoCount << endl;
 				inst->getMotionStamped(&timeDelta, &xa, &ya, &za, &xg, &yg, &zg);
 //				fifoCount -= 12;
+				inst->ComplementaryFilter(&xa, &ya, &za, &xg, &yg, &zg, &pitch, &roll);
 				captureStream << fixed << timeDelta << ',' << xa << ',' << ya << ',' << za << ',';
-				captureStream << xg << ',' << yg << ',' << zg << '\n';
+				captureStream << xg << ',' << yg << ',' << zg << ',' << pitch << ',' << roll << '\n';
 				captures++;
+				
+				if ((int(timeDelta*1000)) % 1000 ==0){
+				cout << "Real time data" << "X Accel: "<< xa <<" Y Accel: " << ya << " Z Accel: "<< za <<'\n' << "X Gyro "<<xg<<" Y Gyro "<< yg << " Z Gyro "<< zg <<" pitch " << pitch << " roll " << roll << '\n';
+				}
+				
 			}
 		}
 		catch(exception& e){

@@ -12,6 +12,7 @@
 #include <fstream>
 #include <cstring>
 #include "INIReader.h"
+#include <math.h>
 
 #define CALIBRATION_ACCUM_COUNT 250
 #define CALIB_READ_DELAY_MS 5
@@ -755,3 +756,30 @@ bool MotionInst::checkTemperature(double *temperature){
 	return stable_temperature;
 	
 }
+
+void MotionInst::ComplementaryFilter(double *xa, double *ya, double *za, double *xg, double *yg, double *zg, double *pitch,double *roll){
+
+	double pitchAcc, rollAcc;
+	double delta_t=1.0/samplesPerSecond;
+	
+	*pitch += *xg * delta_t; // Angle around x axis
+	*roll -= *yg * delta_t; // Angle around y axis
+	
+	int forceMagnitudeApprox = abs((int) *xa*16384)+abs((int) *ya*16384)+abs((int) *za*16384);
+	//cout<<"forceMagnitude is "<<forceMagnitudeApprox << "\n";
+	
+	if (forceMagnitudeApprox >8192 && forceMagnitudeApprox<32768){
+		// Turning around the X axis result in a vector on Y axis
+		pitchAcc=atan2(*ya,*za)*180/M_PI;
+		*pitch=*pitch *0.98+pitchAcc*0.02;
+
+		// Turning around the Y axis result in a vector on X axis
+		rollAcc=atan2(*xa,*za)*180/M_PI;
+		*roll=*roll *0.98+rollAcc*0.02;
+	}
+}
+	
+
+	//
+
+
