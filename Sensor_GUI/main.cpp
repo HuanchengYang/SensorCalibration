@@ -6,11 +6,13 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     MainWindow w;
-    QPushButton button("Hello World!",&w);
+    QPushButton testbutton("Quit",&w);
     w.show();
+    testbutton.show();
+
+    QObject::connect(&testbutton, &QPushButton::released, &QApplication::quit);
 
 
-    button.show();
 
     return a.exec();
 }

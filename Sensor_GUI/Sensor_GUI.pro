@@ -13,8 +13,17 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    calibration.cpp \
+    datarecord.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    calibration.h \
+    datarecord.h \
+    MotionInst.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    calibration.ui \
+    datarecord.ui
+
+DISTFILES +=
