@@ -1,0 +1,15 @@
+INPUT(
+./debug\main.o
+./debug\mainwindow.o
+./debug\calibration.o
+./debug\datarecord.o
+./debug\I2Cdev.o
+./debug\INIReader.o
+./debug\main.o
+./debug\MotionInst.o
+./debug\MPU6050.o
+./debug\ini.o
+./debug\moc_mainwindow.o
+./debug\moc_calibration.o
+./debug\moc_datarecord.o
+);

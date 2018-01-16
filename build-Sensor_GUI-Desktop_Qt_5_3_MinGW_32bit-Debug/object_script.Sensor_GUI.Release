@@ -1,0 +1,15 @@
+INPUT(
+./release\main.o
+./release\mainwindow.o
+./release\calibration.o
+./release\datarecord.o
+./release\I2Cdev.o
+./release\INIReader.o
+./release\main.o
+./release\MotionInst.o
+./release\MPU6050.o
+./release\ini.o
+./release\moc_mainwindow.o
+./release\moc_calibration.o
+./release\moc_datarecord.o
+);
