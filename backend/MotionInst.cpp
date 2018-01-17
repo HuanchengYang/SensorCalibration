@@ -16,7 +16,7 @@
 
 #define CALIBRATION_ACCUM_COUNT 250
 #define CALIB_READ_DELAY_MS 5
-#define CALIBRATION_INI "/home/pi/P273/new_calibration/SensorCalibration/inst.ini"
+#define CALIBRATION_INI "/home/pi/P273/new_calibration/SensorCalibration/backend/inst.ini"
 
 using namespace std;
 
@@ -73,6 +73,9 @@ MotionInst::MotionInst()
 	this->parseINI();
 
 	this->setSamplesPerSecond(this->samplesPerSecond);
+
+    //check temperature
+    this->temperature_read=mpu.getTemperature()/340+33.63;
 }
 
 MotionInst::~MotionInst()

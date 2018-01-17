@@ -21,7 +21,7 @@ void MainWindow::on_Calibration_Button_released()
     //Calibration new_Calibration;
     //new_Calibration.setModal(true);
    // new_Calibration.exec();
-    hide();
+    //hide();
     Calibration1= new Calibration(this);
     Calibration1->show();
 }
@@ -29,7 +29,7 @@ void MainWindow::on_Calibration_Button_released()
 
 void MainWindow::on_CaptureData_Button_released()
 {
-    hide();
+    //hide();
     Datarecord1=new DataRecord(this);
     Datarecord1->show();
 

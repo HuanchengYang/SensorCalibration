@@ -74,6 +74,8 @@ public:
 	int16_t	calibYGOffset = 0;
 	int16_t	calibZGOffset = 0;
 
+    double temperature_read=0.0;
+
 	uint8_t	accelFSSelection = MPU6050_ACCEL_FS_2;
 	uint8_t	gyroFSSelection = MPU6050_GYRO_FS_250;
 				
